@@ -16,23 +16,37 @@ import com.example.chatapp.model.ChatRoom;
 @WebServlet("/rooms")
 public class RoomListServlet extends HttpServlet {
 
-    private final ChatRoomDao chatRoomDao = new ChatRoomDao();
+	private ChatRoomDao chatRoomDao;
+
+	@Override
+	public void init() throws ServletException {
+	     chatRoomDao = new ChatRoomDao();
+	    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+    	System.out.println("RoomListServlet#doGet called");
 
         // 認証済みユーザーの確認
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
-            resp.sendRedirect("login.jsp");
+//            resp.sendRedirect("login.jsp");
+            resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
-        List<ChatRoom> roomList = chatRoomDao.findAll();
-        req.setAttribute("rooms", roomList);
+        List<ChatRoom> rooms = chatRoomDao.findAll();
+        req.setAttribute("rooms", rooms);
+        System.out.println("rooms.size() = " + rooms.size());
 
-        req.getRequestDispatcher("/WEB-INF/views/rooms.jsp").forward(req, resp);
+        req.getRequestDispatcher("rooms.jsp").forward(req, resp);
     }
-}
 
+
+    protected void doPsot(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
+    	doGet(req, resp);
+	
+	}
+}

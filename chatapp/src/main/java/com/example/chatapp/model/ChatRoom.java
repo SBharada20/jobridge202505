@@ -1,24 +1,24 @@
 package com.example.chatapp.model;
 
 public class ChatRoom {
-    private int id;
+    private long id;
     private String name;
 
     // デフォルトコンストラクタ
     public ChatRoom() {}
 
     // コンストラクタ（オプション）
-    public ChatRoom(int id, String name) {
+    public ChatRoom(long id, String name) {
         this.id = id;
         this.name = name;
     }
 
     // ゲッターとセッター
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -28,5 +28,10 @@ public class ChatRoom {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+    	return "ChatRoom{id=" + id + ", name='" + name + "'}";
     }
 }

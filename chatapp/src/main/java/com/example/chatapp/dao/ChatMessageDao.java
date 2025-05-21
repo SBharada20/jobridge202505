@@ -21,11 +21,12 @@ public class ChatMessageDao {
     private static final String DB_PASS = ""; // ← 本番では環境変数管理推奨
 
     static {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+    	try {
+            Class.forName("org.h2.Driver");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("JDBCドライバを読み込めませんでした", e);
         }
+
     }
 
     private Connection getConnection() throws SQLException {
@@ -41,7 +42,7 @@ public class ChatMessageDao {
 
             stmt.setLong(1, message.getRoomId());
             stmt.setLong(2, message.getUserId());
-            stmt.setString(3, message.getMessage());
+            stmt.setString(3, message.getContent());
             stmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -65,7 +66,7 @@ public class ChatMessageDao {
                 message.setId((int) rs.getLong("id"));
                 message.setRoomId((int) rs.getLong("ROOM_ID"));
                 message.setUserId((int) rs.getLong("USER_ID"));
-                message.setMessage(rs.getString("CONTENT"));
+                message.setContent(rs.getString("CONTENT"));
                 message.setTimestamp(rs.getTimestamp("CREATED_AT").toLocalDateTime());
 
                 messages.add(message);

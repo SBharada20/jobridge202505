@@ -3,10 +3,10 @@ package com.example.chatapp.model;
 import java.time.LocalDateTime;
 
 public class ChatMessage {
-    private int id;
-    private int roomId;
-    private int userId;
-    private String message;
+    private long id;
+    private long roomId;
+    private long userId;
+    private String content;
     private LocalDateTime timestamp;
 
     // 表示用（ユーザー名など）※DBには含まれない
@@ -14,45 +14,45 @@ public class ChatMessage {
 
     public ChatMessage() {}
 
-    public ChatMessage(int id, int roomId, int userId, String message, LocalDateTime timestamp) {
+    public ChatMessage(long id, long roomId, long userId, String content, LocalDateTime timestamp) {
         this.id = id;
         this.roomId = roomId;
         this.userId = userId;
-        this.message = message;
+        this.content = content;
         this.timestamp = timestamp;
     }
 
     // ゲッター・セッター
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public int getRoomId() {
+    public long getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(int roomId) {
+    public void setRoomId(long roomId) {
         this.roomId = roomId;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
-    public String getMessage() {
-        return message;
+    public String getContent() {
+        return content;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public LocalDateTime getTimestamp() {

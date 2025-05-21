@@ -1,6 +1,7 @@
 package com.example.chatapp.controller;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -34,21 +35,26 @@ public class RegisterServlet extends HttpServlet {
 
         String username = req.getParameter("username");
         String password = req.getParameter("password");
-        String displayName = req.getParameter("displayName");
+        String displayName = req.getParameter("username");
 
         if (username == null || password == null || displayName == null ||
                 username.isEmpty() || password.isEmpty() || displayName.isEmpty()) {
             req.setAttribute("error", "全ての項目を入力してください。");
-            req.getRequestDispatcher("/register.jsp").forward(req, resp);
+            req.getRequestDispatcher("register.jsp").forward(req, resp);
             return;
         }
 
         // ユーザー名が既に存在するか確認
-        if (userDao.findByUsername(username) != null) {
-            req.setAttribute("error", "そのユーザー名は既に使用されています。");
-            req.getRequestDispatcher("/register.jsp").forward(req, resp);
-            return;
-        }
+        try {
+			if (userDao.findByUsername(username) != null) {
+			    req.setAttribute("error", "そのユーザー名は既に使用されています。");
+			    req.getRequestDispatcher("register.jsp").forward(req, resp);
+			    return;
+			}
+		} catch (SQLException | ServletException | IOException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
 
         // ユーザー登録処理
         User user = new User();
@@ -59,10 +65,11 @@ public class RegisterServlet extends HttpServlet {
         boolean success = userDao.insertUser(user);
 
         if (success) {
+        	req.setAttribute("message", "登録が完了しました。ログインしてください。");
             resp.sendRedirect("login.jsp");
         } else {
             req.setAttribute("error", "ユーザー登録に失敗しました。");
-            req.getRequestDispatcher("/register.jsp").forward(req, resp);
+            req.getRequestDispatcher("register.jsp").forward(req, resp);
         }
     }
 }

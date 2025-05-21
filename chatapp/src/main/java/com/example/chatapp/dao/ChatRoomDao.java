@@ -18,11 +18,11 @@ public class ChatRoomDao {
     private static final String DB_PASS = ""; // ← 本番では環境変数管理推奨
 
     static {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+    	try {
+			Class.forName("org.h2.Driver");
+		} catch (ClassNotFoundException e) {
+			throw new IllegalStateException ("JDBCドライバを読み込めませんでした");
+			}
     }
 
     private Connection getConnection() throws SQLException {
@@ -31,8 +31,10 @@ public class ChatRoomDao {
 
     // 全チャットルーム取得
     public List<ChatRoom> findAll() {
+    	
         List<ChatRoom> rooms = new ArrayList<>();
         String sql = "SELECT * FROM CHAT_ROOMS";
+        System.out.println("チャットルーム件数: " + rooms.size());
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -67,7 +69,7 @@ public class ChatRoomDao {
     }
 
     // IDによるチャットルーム検索
-    public ChatRoom findById(Long id) {
+    public ChatRoom findById(int id) {
         String sql = "SELECT * FROM CHAT_ROOMS WHERE ID = ?";
 
         try (Connection conn = getConnection();
@@ -78,7 +80,7 @@ public class ChatRoomDao {
 
             if (rs.next()) {
                 ChatRoom room = new ChatRoom();
-                room.setId((int) rs.getLong("id"));
+                room.setId(rs.getInt("id"));
                 room.setName(rs.getString("name"));
                 return room;
             }

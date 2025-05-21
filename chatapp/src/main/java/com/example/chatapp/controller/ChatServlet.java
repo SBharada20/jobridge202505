@@ -12,10 +12,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import com.example.chatapp.dao.ChatMessageDao;
+import com.example.chatapp.dao.ChatRoomDao;
 import com.example.chatapp.dao.UserDao;
 import com.example.chatapp.model.ChatMessage;
 import com.example.chatapp.model.User;
-
 
 
 @WebServlet("/chat")
@@ -23,11 +23,13 @@ public class ChatServlet extends HttpServlet {
 
     private ChatMessageDao messageDao;
     private UserDao userDao;
-
+    private ChatRoomDao roomDao;
+    
+    
     @Override
     public void init() {
         messageDao = new ChatMessageDao();
-        userDao = new UserDao();
+        roomDao = new ChatRoomDao();
     }
 
     @Override
@@ -64,11 +66,12 @@ public class ChatServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
-
+        String content = req.getParameter("content");
         String roomIdStr = req.getParameter("roomId");
-        String message = req.getParameter("message");
+        
+        User user = (User) req.getSession().getAttribute("user");
 
-        if (roomIdStr == null || message == null || message.trim().isEmpty()) {
+        if (roomIdStr == null || content == null || content.trim().isEmpty()) {
             resp.sendRedirect("rooms.jsp");
             return;
         }
@@ -82,7 +85,7 @@ public class ChatServlet extends HttpServlet {
         }
 
         HttpSession session = req.getSession(false);
-        User user = (session != null) ? (User) session.getAttribute("user") : null;
+        
 
         if (user == null) {
             resp.sendRedirect("login.jsp");
@@ -92,7 +95,7 @@ public class ChatServlet extends HttpServlet {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setRoomId(roomId);
         chatMessage.setUserId(user.getId());
-        chatMessage.setMessage(message);
+        chatMessage.setContent(content);
         chatMessage.setTimestamp(LocalDateTime.now());
 
         messageDao.save(chatMessage);
