@@ -22,7 +22,7 @@ public class CreateRoomServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         // フォームを表示
-        req.getRequestDispatcher("/WEB-INF/views/createRoom.jsp").forward(req, resp);
+        req.getRequestDispatcher("createRoom.jsp").forward(req, resp);
     }
 
     @Override
@@ -36,8 +36,8 @@ public class CreateRoomServlet extends HttpServlet {
             room.setName(name);
             chatRoomDao.save(room);
         }
-
-        resp.sendRedirect("rooms.jsp");
+        resp.sendRedirect(req.getContextPath() + "/rooms");
+//        resp.sendRedirect("rooms.jsp");
     }
 }
 

@@ -5,10 +5,12 @@
 <head>
     <meta charset="UTF-8">
     <title>ユーザー登録</title>
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css">
     <!-- スタイルは省略 -->
 </head>
 <body>
-<div class="register-container">
+<div class="content-wrapper">
+<div class="form-container">
     <h2>ユーザー登録</h2>
 
     <!-- 成功メッセージ -->
@@ -34,11 +36,13 @@
 
         <label for="displayName">表示名:</label>
         <input type="text" name="displayName" id="displayName" required />
-
-        <input type="submit" value="登録" />
+		<button type="submit" class="btn btn-primary">登録</button>
+<!--        <input type="submit" value="登録" />-->
     </form>
-
-    <p><a href="login">ログインはこちら</a></p>
+   <p style="margin-top: 20px;"><a href="login">ログインはこちら</a></p>
 </div>
+ 
+
+ </div>
 </body>
 </html>

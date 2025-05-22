@@ -1,56 +1,75 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ page import="model.ChatMessage, model.ChatRoom, model.User" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="com.example.chatapp.model.User" %>
+
 <%
-    // ログインチェック
     User user = (User) session.getAttribute("user");
     if (user == null) {
         response.sendRedirect("login");
         return;
     }
-    ChatRoom room = (ChatRoom) request.getAttribute("room");
-    List<ChatMessage> messages = (List<ChatMessage>) request.getAttribute("messages");
 %>
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>チャットルーム：<%= room.getName() %></title>
-    <style>
-        .chat-container { width: 600px; margin: 2em auto; }
-        .messages { border: 1px solid #ccc; padding: 1em; height: 300px; overflow-y: scroll; }
-        .message { margin-bottom: 0.5em; }
-        .message .author { font-weight: bold; }
-        .message .time { font-size: 0.8em; color: #666; margin-left: 0.5em; }
-        form textarea { width: 100%; height: 60px; }
-        form button { margin-top: 0.5em; }
-    </style>
+    <title>チャットルーム - ${room.name}</title>
+<!--    <style>-->
+<!--        body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }-->
+<!--        h2 { color: #333; }-->
+<!--        .info { margin-bottom: 20px; }-->
+<!--        .message { padding: 10px; border-bottom: 1px solid #ccc; }-->
+<!--        .user { font-weight: bold; }-->
+<!--        .timestamp { font-size: 0.8em; color: #888; }-->
+<!--        form { margin-top: 20px; }-->
+<!--        input[type="text"] { width: 70%; padding: 8px; }-->
+<!--        input[type="submit"] { padding: 8px 16px; }-->
+<!--    </style>-->
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css">
 </head>
 <body>
-<div class="chat-container">
-    <h2>ルーム: <%= room.getName() %></h2>
-    <div class="messages">
-        <c:forEach var="msg" items="${messages}">
+<div class="content-wrapper">
+            <div class="chat-header">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center;">
+                        <svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" style="max-width: 150px; margin-right: 20px;">
+                          <!-- Simplified logo for chat header -->
+                          <g transform="translate(20, 50)">
+                            <path d="M0 20 L0 0 L40 0 L60 20 L60 80 L40 80 L20 60 L20 40 L0 20 Z" 
+                                  fill="none" stroke="white" stroke-width="6" stroke-linejoin="round"/>
+                            <text x="80" y="35" font-size="32" fill="white" font-family="Arial, sans-serif" font-weight="bold">jobridge</text>
+                            <text x="80" y="65" font-size="24" fill="white" font-family="Arial, sans-serif">chat</text>
+                          </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+    <h2>チャットルーム: ${room.name}</h2>
+
+    <div class="info">
+    	<div style="font-size: 14px; opacity: 0.9;">
+        	ようこそ、<strong><%= user.getDisplayName() %></strong> さん！
+    	</div>
+    </div>
+    <div id="chat-messages" class="message">
+        <c:forEach var="message" items="${messages}">
             <div class="message">
-                <span class="author">${msg.displayName}</span>
-                <span class="time">[<fmt:formatDate value="${msg.timestamp}" pattern="HH:mm:ss"/>]</span><br/>
-                <span class="content">${msg.content}</span>
+                <span class="user">${message.displayName}</span>: 
+                <span>${message.content}</span><br>
+                <span class="timestamp">${message.timestamp}</span>
             </div>
         </c:forEach>
-        <c:if test="${empty messages}">
-            <p>まだメッセージがありません。</p>
-        </c:if>
     </div>
-
-    <form action="chat" method="post">
-        <input type="hidden" name="roomId" value="${room.id}" />
-        <textarea name="content" placeholder="メッセージを入力..." required></textarea><br/>
-        <button type="submit">送信</button>
+	<div style="text-align: right; font-size: 14px;">
+    <form class="message-form" action="chat" method="post">
+        <input type="hidden" name="roomId" value="${roomId}" />
+        <input type="text" name="content" placeholder="メッセージを入力..." required />
+        <input type="submit" value="送信" />
     </form>
-
-    <p><a href="rooms">← ルーム一覧へ戻る</a></p>
-    <p><a href="logout">ログアウト</a></p>
-</div>
+    <p style="margin-top: 20px;"><a href="rooms" >← チャットルーム一覧に戻る</a></p>
+	</div>
+ </div>
 </body>
 </html>
-

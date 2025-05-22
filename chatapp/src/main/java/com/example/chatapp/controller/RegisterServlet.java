@@ -35,7 +35,7 @@ public class RegisterServlet extends HttpServlet {
 
         String username = req.getParameter("username");
         String password = req.getParameter("password");
-        String displayName = req.getParameter("username");
+        String displayName = req.getParameter("displayName");
 
         if (username == null || password == null || displayName == null ||
                 username.isEmpty() || password.isEmpty() || displayName.isEmpty()) {

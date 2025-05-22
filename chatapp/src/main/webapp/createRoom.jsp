@@ -5,16 +5,19 @@
 <head>
     <meta charset="UTF-8">
     <title>チャットルーム作成</title>
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css">
 </head>
 <body>
+<div class="container">
     <h2>新しいチャットルームを作成</h2>
-
-    <form method="post" action="createRoom.jsp">
+    <div class="form-container">
+    <form method="post" action="createRoom">
         <label>ルーム名:</label><br/>
         <input type="text" name="name" required /><br/><br/>
-        <input type="submit" value="作成" />
+        <button type="submit" class="btn btn-primary">作成</button>
     </form>
-
-    <p><a href="rooms.jsp">← ルーム一覧へ戻る</a></p>
+    </div>
+    <p style="margin-top: 20px;"><a href="rooms">← ルーム一覧へ戻る</a></p>
+</div>
 </body>
 </html>

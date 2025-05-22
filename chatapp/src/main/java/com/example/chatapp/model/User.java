@@ -11,7 +11,7 @@ public class User {
     public User() {}
 
  // コンストラクタ（オプション）
-    public User(int id, String username, String password, String displayName) {
+    public User(long id, String username, String password, String displayName) {
         this.id = id;
         this.username = username;
         this.password = password;

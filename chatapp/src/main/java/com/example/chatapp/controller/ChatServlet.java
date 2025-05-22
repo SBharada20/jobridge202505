@@ -15,8 +15,8 @@ import com.example.chatapp.dao.ChatMessageDao;
 import com.example.chatapp.dao.ChatRoomDao;
 import com.example.chatapp.dao.UserDao;
 import com.example.chatapp.model.ChatMessage;
+import com.example.chatapp.model.ChatRoom;
 import com.example.chatapp.model.User;
-
 
 @WebServlet("/chat")
 public class ChatServlet extends HttpServlet {
@@ -24,11 +24,11 @@ public class ChatServlet extends HttpServlet {
     private ChatMessageDao messageDao;
     private UserDao userDao;
     private ChatRoomDao roomDao;
-    
-    
+
     @Override
     public void init() {
         messageDao = new ChatMessageDao();
+        userDao = new UserDao(); // ← ヌルポ対策のため必ず初期化
         roomDao = new ChatRoomDao();
     }
 
@@ -40,43 +40,7 @@ public class ChatServlet extends HttpServlet {
             return;
         }
 
-        Long roomId;
-        try {
-            roomId = (long) Integer.parseInt(roomIdStr);
-        } catch (NumberFormatException e) {
-            resp.sendRedirect("rooms.jsp");
-            return;
-        }
-
-        // メッセージ一覧を取得
-        List<ChatMessage> messages = messageDao.findByRoomId(roomId);
-        // 各メッセージに表示名をセット（JOIN代用）
-        for (ChatMessage msg : messages) {
-            User user = userDao.getUserById(msg.getUserId());
-            if (user != null) {
-                msg.setDisplayName(user.getDisplayName());
-            }
-        }
-
-        req.setAttribute("roomId", roomId);
-        req.setAttribute("messages", messages);
-        req.getRequestDispatcher("chat.jsp").forward(req, resp);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
-        String content = req.getParameter("content");
-        String roomIdStr = req.getParameter("roomId");
-        
-        User user = (User) req.getSession().getAttribute("user");
-
-        if (roomIdStr == null || content == null || content.trim().isEmpty()) {
-            resp.sendRedirect("rooms.jsp");
-            return;
-        }
-
-        int roomId;
+        long roomId;
         try {
             roomId = Integer.parseInt(roomIdStr);
         } catch (NumberFormatException e) {
@@ -84,23 +48,71 @@ public class ChatServlet extends HttpServlet {
             return;
         }
 
-        HttpSession session = req.getSession(false);
-        
+        // チャットルーム情報取得
+        ChatRoom room = roomDao.findById(roomId);
+        if (room == null) {
+            resp.sendRedirect("rooms.jsp");
+            return;
+        }
 
-        if (user == null) {
-            resp.sendRedirect("login.jsp");
+        // メッセージ取得と表示名セット
+        List<ChatMessage> messages = messageDao.findByRoomId((long) roomId);
+        for (ChatMessage msg : messages) {
+            User user = userDao.getUserById(msg.getUserId());
+            if (user != null) {
+                msg.setDisplayName(user.getDisplayName());
+            }
+        }
+
+        // データをJSPへ渡す
+        req.setAttribute("roomId", roomId);
+        req.setAttribute("room", room);
+        req.setAttribute("messages", messages);
+        req.getRequestDispatcher("chat.jsp").forward(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+
+        String content = req.getParameter("content");
+        String roomIdStr = req.getParameter("roomId");
+
+        HttpSession session = req.getSession(false);
+        User user = (User) (session != null ? session.getAttribute("user") : null);
+
+        if (user == null || content == null || content.trim().isEmpty() || roomIdStr == null) {
+            resp.sendRedirect("rooms.jsp");
+            return;
+        }
+
+        long roomId;
+        try {
+            roomId = Integer.parseInt(roomIdStr);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            resp.sendRedirect("rooms.jsp");
             return;
         }
 
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setRoomId(roomId);
         chatMessage.setUserId(user.getId());
-        chatMessage.setContent(content);
+        chatMessage.setContent(content.trim());
         chatMessage.setTimestamp(LocalDateTime.now());
 
-        messageDao.save(chatMessage);
+        try {
+            messageDao.save(chatMessage);
+//            System.out.println("Message saved: " + chatMessage.getContent());
+        } catch (Exception e) {
+            e.printStackTrace();
+            req.setAttribute("error", "メッセージの保存中にエラーが発生しました。");
+            req.getRequestDispatcher("chat.jsp").forward(req, resp);
+            return;
+        }
 
-        // 再表示
+        // 成功時、チャット画面を再表示
         resp.sendRedirect("chat?roomId=" + roomId);
     }
+
 }

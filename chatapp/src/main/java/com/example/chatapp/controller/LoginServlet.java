@@ -37,8 +37,7 @@ public class LoginServlet extends HttpServlet {
 		if (username == null || username.isEmpty() ||
 		          password == null || password.isEmpty()) {
 		            req.setAttribute("error", "ユーザー名とパスワードを入力してください。");
-		            req.getRequestDispatcher("login.jsp")
-		               .forward(req, resp);
+		            req.getRequestDispatcher("login.jsp").forward(req, resp);
 		            return;
 		        }
 

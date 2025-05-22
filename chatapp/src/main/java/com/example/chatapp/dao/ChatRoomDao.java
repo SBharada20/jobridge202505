@@ -1,6 +1,5 @@
 package com.example.chatapp.dao;
 
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,82 +12,100 @@ import com.example.chatapp.model.ChatRoom;
 
 public class ChatRoomDao {
 
-	private final String JDBC_URL ="jdbc:h2:~/desktop/DB/chatapp";
-    private static final String DB_USER ="sa";
-    private static final String DB_PASS = ""; // ← 本番では環境変数管理推奨
+    private static final String JDBC_URL = "jdbc:h2:~/desktop/DB/chatapp";
+    private static final String DB_USER = "sa";
+    private static final String DB_PASS = "";
+
+    private static final String SQL_FIND_ALL = "SELECT * FROM CHAT_ROOMS";
+    private static final String SQL_INSERT = "INSERT INTO CHAT_ROOMS (NAME) VALUES (?)";
+    private static final String SQL_FIND_BY_ID = "SELECT * FROM CHAT_ROOMS WHERE ID = ?";
+    private static final String SQL_DELETE_BY_ID = "DELETE FROM CHAT_ROOMS WHERE ID = ?";
 
     static {
-    	try {
-			Class.forName("org.h2.Driver");
-		} catch (ClassNotFoundException e) {
-			throw new IllegalStateException ("JDBCドライバを読み込めませんでした");
-			}
+        try {
+            Class.forName("org.h2.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("JDBCドライバを読み込めませんでした", e);
+        }
     }
 
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS);
     }
 
-    // 全チャットルーム取得
+    /** 全チャットルームを取得 */
     public List<ChatRoom> findAll() {
-    	
         List<ChatRoom> rooms = new ArrayList<>();
-        String sql = "SELECT * FROM CHAT_ROOMS";
-        System.out.println("チャットルーム件数: " + rooms.size());
 
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
+             PreparedStatement stmt = conn.prepareStatement(SQL_FIND_ALL);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 ChatRoom room = new ChatRoom();
-                room.setId((int) rs.getLong("ID"));
+                room.setId(rs.getLong("ID"));
                 room.setName(rs.getString("NAME"));
                 rooms.add(room);
             }
 
         } catch (SQLException e) {
+            System.err.println("Error in findAll: " + e.getMessage());
             e.printStackTrace();
         }
 
         return rooms;
     }
-    
-    public void save(ChatRoom room) {
-        String sql = "INSERT INTO CHAT_ROOMS (NAME) VALUES (?)";
 
+    /** 新しいチャットルームを保存 */
+    public void save(ChatRoom room) {
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(SQL_INSERT)) {
 
             stmt.setString(1, room.getName());
             stmt.executeUpdate();
 
         } catch (SQLException e) {
+            System.err.println("Error in save: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // IDによるチャットルーム検索
-    public ChatRoom findById(int id) {
-        String sql = "SELECT * FROM CHAT_ROOMS WHERE ID = ?";
-
+    /** ID指定でチャットルームを検索 */
+    public ChatRoom findById(Long roomId) {
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(SQL_FIND_BY_ID)) {
+
+            stmt.setLong(1, roomId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    ChatRoom room = new ChatRoom();
+                    room.setId(rs.getLong("ID"));
+                    room.setName(rs.getString("NAME"));
+                    return room;
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error in findById: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    // IDによるチャットルーム削除
+    public boolean deleteById(long id) {
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SQL_DELETE_BY_ID)) {
 
             stmt.setLong(1, id);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                ChatRoom room = new ChatRoom();
-                room.setId(rs.getInt("id"));
-                room.setName(rs.getString("name"));
-                return room;
-            }
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return false;
     }
 }
