@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpSession;
 /**
  * Servlet implementation class LoginServlet
  */
-import com.example.chatapp.dao.UserDao;
+import com.example.chatapp.dao.UserDao3;
 import com.example.chatapp.model.User;
 
 
@@ -20,7 +20,7 @@ import com.example.chatapp.model.User;
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
-	private UserDao userDao = new UserDao();
+	private UserDao3 userDao = new UserDao3();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)

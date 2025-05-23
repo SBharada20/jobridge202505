@@ -19,25 +19,12 @@
     <meta charset="UTF-8">
     <title>チャットルーム一覧</title>
     <link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css">
-<!--    <style>-->
-<!--        body { font-family: Arial, sans-serif; padding: 1em; background: #f9f9f9; }-->
-<!--        .container { max-width: 600px; margin: 2em auto; background: #fff; padding: 1.5em; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }-->
-<!--        h2 { margin-top: 0; }-->
-<!--        ul { list-style: none; padding: 0; }-->
-<!--        li { margin: 0.5em 0; }-->
-<!--        a.room-link { text-decoration: none; color: #2c3e50; font-size: 1.1em; }-->
-<!--        a.room-link:hover { text-decoration: underline; }-->
-<!--        .actions { margin-top: 1.5em; }-->
-<!--        .actions a, .actions form { display: inline-block; margin-right: 1em; }-->
-<!--        .btn { background: #3498db; color: #fff; padding: 0.5em 1em; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; }-->
-<!--        .btn:hover { background: #2980b9; }-->
-<!--    </style>-->
 </head>
 <body>
 <div class="content-wrapper">
-            <div class="page-header">
-                <div class="logo">
-                    <svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
+    <div class="page-header">
+         <div class="logo">
+             <svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
                       <!-- Background circles -->
                       <circle cx="50" cy="100" r="15" fill="#FF8B20" opacity="0.7"/>
                       <circle cx="750" cy="60" r="12" fill="#333" opacity="0.8"/>
@@ -115,7 +102,7 @@
                         <line x1="15" y1="-10" x2="15" y2="10" stroke="#333" stroke-width="1" opacity="0.4"/>
                       </g>
                     </svg>
-                </div>
+         </div>
     <div class="container">
         <h2 class="page-title">ようこそ、<%= user.getDisplayName() %> さん</h2>
 
@@ -123,7 +110,6 @@
         <ul class="room-list">
             <c:forEach var="room" items="${rooms}">
                 <li>
-<!--                    <a class="room-link" href="chat?roomId=${room.id}">${room.name}</a>-->
  						<a class="room-link" href="${pageContext.request.contextPath}/chat?roomId=${room.id}">
                 ${room.name}
             </a>
@@ -136,7 +122,7 @@
  
         <div class="actions">
         	<div class="form-group">
-            <a class="btn btn-primary" href="createRoom">新しいルームを作成</a>
+        	<a class="btn btn-primary" href="createRoom">新しいルームを作成</a>
             </div>
             <div class="form-group">
             <form action="logout" method="get" style="display:inline;">
@@ -145,5 +131,7 @@
             </div>
         </div>
     </div>
+	</div>
+</div>
 </body>
 </html>

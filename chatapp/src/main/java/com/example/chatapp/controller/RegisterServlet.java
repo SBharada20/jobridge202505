@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import com.example.chatapp.dao.UserDao;
+import com.example.chatapp.dao.UserDao3;
 import com.example.chatapp.model.User;
 
 
@@ -17,11 +17,11 @@ import com.example.chatapp.model.User;
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
 
-    private UserDao userDao;
+    private UserDao3 userDao;
 
     @Override
     public void init() {
-        userDao = new UserDao(); // DAOはJDBC設定済み前提
+        userDao = new UserDao3(); // DAOはJDBC設定済み前提
     }
 
     @Override
