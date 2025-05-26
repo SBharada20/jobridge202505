@@ -9,10 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- * Servlet implementation class LoginServlet
- */
-import com.example.chatapp.dao.UserDao3;
+import com.example.chatapp.dao.UserDao;
 import com.example.chatapp.model.User;
 
 
@@ -20,7 +17,7 @@ import com.example.chatapp.model.User;
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
-	private UserDao3 userDao = new UserDao3();
+	private UserDao userDao = new UserDao();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -41,7 +38,6 @@ public class LoginServlet extends HttpServlet {
 		            return;
 		        }
 
-//		User user = userDao.findByUsernameAndPassword(username, password);
 		
 		User user;
 		user = userDao.findByUsernameAndPassword(username, password);
@@ -49,8 +45,7 @@ public class LoginServlet extends HttpServlet {
 			HttpSession session = req.getSession();
 			session.setAttribute("user", user);
 			resp.sendRedirect(req.getContextPath() + "/rooms");
-//				RequestDispatcher dispatcher = req.getRequestDispatcher("rooms.jsp");;
-//				dispatcher.forward(req, resp);		
+	
 			
 			
 		} else {

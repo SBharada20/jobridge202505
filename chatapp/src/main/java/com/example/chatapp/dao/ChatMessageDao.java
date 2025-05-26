@@ -9,25 +9,32 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.example.chatapp.model.ChatMessage;
 
 public class ChatMessageDao {
+	
+	private static final Logger LOGGER = Logger.getLogger(ChatMessageDao.class.getName());
 
-    private static final String JDBC_URL           = "jdbc:h2:~/desktop/DB/chatapp";
-    private static final String DB_USER            = "sa";
-    private static final String DB_PASS            = "";
-
-    private static final String SQL_INSERT         =
+    private static final String JDBC_URL = "jdbc:h2:~/desktop/DB/chatapp";
+    private static final String DB_USER  = "sa";
+    private static final String DB_PASS  = "";
+    
+    private static final String SQL_INSERT =
         "INSERT INTO MESSAGES (ROOM_ID, USER_ID, CONTENT, CREATED_AT) VALUES (?, ?, ?, ?)";
     private static final String SQL_SELECT_BY_ROOM =
         "SELECT ID, ROOM_ID, USER_ID, CONTENT, CREATED_AT FROM MESSAGES WHERE ROOM_ID = ? ORDER BY CREATED_AT ASC";
-
+    private static final String SQL_DELETE_BY_ID = 
+    	    "DELETE FROM MESSAGES WHERE ID = ? AND USER_ID = ?";
+    
     static {
         try {
             Class.forName("org.h2.Driver");
         } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("H2 JDBC Driver not found", e);
+        	LOGGER.log(Level.SEVERE, "JDBCドライバを読み込めませんでした", e);
+            throw new IllegalStateException("JDBCドライバを読み込めませんでした", e);
         }
     }
 
@@ -47,7 +54,8 @@ public class ChatMessageDao {
 
             int affected = stmt.executeUpdate();
             if (affected == 0) {
-                System.err.println("Warning: No rows inserted for chat message.");
+            	LOGGER.warning("No rows inserted for chat message.");
+            
             }
 
             try (ResultSet keys = stmt.getGeneratedKeys()) {
@@ -57,8 +65,7 @@ public class ChatMessageDao {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error saving chat message:");
-            e.printStackTrace();
+        	LOGGER.log(Level.SEVERE, "No rows inserted for chat message.", e);
         }
     }
 
@@ -69,7 +76,7 @@ public class ChatMessageDao {
              PreparedStatement stmt = conn.prepareStatement(SQL_SELECT_BY_ROOM)) {
 
             stmt.setLong(1, roomId);
-            System.out.println("Executing: " + stmt);
+            LOGGER.info("認証クエリ実行: " + stmt);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -87,9 +94,34 @@ public class ChatMessageDao {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error retrieving messages for room " + roomId + ":");
-            e.printStackTrace();
+        	LOGGER.log(Level.SEVERE, "メッセージ取得中にSQLエラーが発生しました", e);
         }
         return messages;
     }
+    /**
+     * メッセージ削除（自分のメッセージのみ）
+     */
+    public boolean deleteMessage(long messageId, long userId) {
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SQL_DELETE_BY_ID)) {
+            
+            stmt.setLong(1, messageId);
+            stmt.setLong(2, userId);
+            
+            int affected = stmt.executeUpdate();
+            if (affected > 0) {
+                LOGGER.info("Message deleted successfully: ID=" + messageId + ", User=" + userId);
+                return true;
+            } else {
+                LOGGER.warning("No message deleted - either message not found or not owned by user: ID=" + messageId + ", User=" + userId);
+                return false;
+            }
+            
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error deleting message: ID=" + messageId + ", User=" + userId, e);
+            return false;
+        }
+    }
+    
+    
 }

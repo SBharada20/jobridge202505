@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpSession;
 
 import com.example.chatapp.dao.ChatMessageDao;
 import com.example.chatapp.dao.ChatRoomDao;
-import com.example.chatapp.dao.UserDao3;
+import com.example.chatapp.dao.UserDao;
 import com.example.chatapp.model.ChatMessage;
 import com.example.chatapp.model.ChatRoom;
 import com.example.chatapp.model.User;
@@ -31,14 +31,14 @@ public class ChatServlet extends HttpServlet {
     private static final String UTF_8 = "UTF-8";
 
     private ChatMessageDao messageDao;
-    private UserDao3 userDao;
+    private UserDao userDao;
     private ChatRoomDao roomDao;
 
     @Override
     public void init() throws ServletException {
         try {
             messageDao = new ChatMessageDao();
-            userDao = new UserDao3();
+            userDao = new UserDao();
             roomDao = new ChatRoomDao();
             LOGGER.info("ChatServlet initialized successfully");
         } catch (Exception e) {
@@ -70,6 +70,7 @@ public class ChatServlet extends HttpServlet {
             return;
         }
         
+                
         try {
             // Verify user session
             HttpSession session = req.getSession(false);
@@ -79,6 +80,7 @@ public class ChatServlet extends HttpServlet {
                 resp.sendRedirect("login.jsp");
                 return;
             }
+            
 
             // Get chat room information
             ChatRoom room = roomDao.findById(roomId);
@@ -88,10 +90,24 @@ public class ChatServlet extends HttpServlet {
                 req.getRequestDispatcher(ROOMS_JSP).forward(req, resp);
                 return;
             }
-           
+   
+            // セッションから成功メッセージを取得して表示
+            HttpSession session1 = req.getSession(false);
+            if (session1 != null) {
+                String success = (String) session1.getAttribute("success");
+                if (success != null) {
+                    req.setAttribute("success", success);
+                    session1.removeAttribute("success"); // 一度表示したら削除
+                }
+            }       
+   
+            
+            
+            
             // Get messages and set display names
             List<ChatMessage> messages = messageDao.findByRoomId(roomId);
             enrichMessagesWithUserData(messages);
+                        
 
             // Pass data to JSP
             req.setAttribute("roomId", roomId);
@@ -115,6 +131,13 @@ public class ChatServlet extends HttpServlet {
 
         String content = req.getParameter("content");
         String roomIdStr = req.getParameter("roomId");
+        String action = req.getParameter("action");
+        
+        // 削除アクションの処理
+        if ("delete".equals(action)) {
+            handleDeleteMessage(req, resp);
+            return;
+        }
 
         // Validate session and user
         HttpSession session = req.getSession(false);
@@ -235,6 +258,68 @@ public class ChatServlet extends HttpServlet {
             }
         }
     }
+    
+    /**
+     * メッセージ削除処理
+     */
+    private void handleDeleteMessage(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        
+        String messageIdStr = req.getParameter("messageId");
+        String roomIdStr = req.getParameter("roomId");
+        
+        // セッションとユーザーの検証
+        HttpSession session = req.getSession(false);
+        User user = (User) (session != null ? session.getAttribute("user") : null);
+        
+        if (user == null) {
+            LOGGER.warning("Unauthorized delete attempt");
+            resp.sendRedirect("login.jsp");
+            return;
+        }
+        
+        // パラメータの検証
+        if (messageIdStr == null || messageIdStr.trim().isEmpty() ||
+            roomIdStr == null || roomIdStr.trim().isEmpty()) {
+            LOGGER.warning("Missing parameters for delete operation");
+            redirectWithError(req, resp, roomIdStr, "削除に必要な情報が不足しています。");
+            return;
+        }
+        
+        long messageId;
+        long roomId;
+        try {
+            messageId = Long.parseLong(messageIdStr.trim());
+            roomId = Long.parseLong(roomIdStr.trim());
+            if (messageId <= 0 || roomId <= 0) {
+                throw new NumberFormatException("IDs must be positive");
+            }
+        } catch (NumberFormatException e) {
+            LOGGER.warning("Invalid ID parameters for delete: messageId=" + messageIdStr + ", roomId=" + roomIdStr);
+            redirectWithError(req, resp, roomIdStr, "無効なパラメータです。");
+            return;
+        }
+        
+        // メッセージ削除実行
+        try {
+            boolean deleted = messageDao.deleteMessage(messageId, user.getId());
+            
+            if (deleted) {
+                LOGGER.info("Message deleted successfully by user: " + user.getId() + ", messageId: " + messageId);
+                // 成功時はチャットルームにリダイレクト（成功メッセージ付き）
+                req.getSession().setAttribute("success", "メッセージが削除されました。");
+                resp.sendRedirect("chat?roomId=" + roomId);
+            } else {
+                LOGGER.warning("Failed to delete message - not found or not owned: messageId=" + messageId + ", userId=" + user.getId());
+                redirectWithError(req, resp, roomIdStr, "メッセージの削除に失敗しました。自分のメッセージのみ削除できます。");
+            }
+            
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error during message deletion", e);
+            redirectWithError(req, resp, roomIdStr, "メッセージの削除中にエラーが発生しました。");
+        }
+    }
+    
 
     /**
      * Helper method to redirect with error message
@@ -251,7 +336,7 @@ public class ChatServlet extends HttpServlet {
                 req.getRequestDispatcher(CHAT_JSP).forward(req, resp);
                 return;
             } catch (NumberFormatException e) {
-                // Fall through to redirect to rooms
+
             }
         }
         

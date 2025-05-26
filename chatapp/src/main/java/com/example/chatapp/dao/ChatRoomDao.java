@@ -7,10 +7,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.example.chatapp.model.ChatRoom;
 
 public class ChatRoomDao {
+	
+	private static final Logger logger = Logger.getLogger(ChatRoomDao.class.getName());
 
     private static final String JDBC_URL = "jdbc:h2:~/desktop/DB/chatapp";
     private static final String DB_USER = "sa";
@@ -25,6 +29,7 @@ public class ChatRoomDao {
         try {
             Class.forName("org.h2.Driver");
         } catch (ClassNotFoundException e) {
+        	logger.log(Level.SEVERE, "JDBCドライバを読み込めませんでした", e);
             throw new IllegalStateException("JDBCドライバを読み込めませんでした", e);
         }
     }
@@ -49,8 +54,7 @@ public class ChatRoomDao {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error in findAll: " + e.getMessage());
-            e.printStackTrace();
+        	logger.log(Level.SEVERE, "全チャットルームを取得中にSQLエラーが発生しました", e);
         }
 
         return rooms;
@@ -65,8 +69,7 @@ public class ChatRoomDao {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            System.err.println("Error in save: " + e.getMessage());
-            e.printStackTrace();
+        	logger.log(Level.SEVERE, "チャットルーム登録中にSQLエラーが発生しました", e);
         }
     }
 
@@ -87,8 +90,7 @@ public class ChatRoomDao {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error in findById: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "チャットルーム検索中にSQLエラーが発生しました", e);
         }
 
         return null;
@@ -103,7 +105,7 @@ public class ChatRoomDao {
             return affectedRows > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+        	logger.log(Level.SEVERE, "チャットルーム削除中にSQLエラーが発生しました", e);
         }
 
         return false;

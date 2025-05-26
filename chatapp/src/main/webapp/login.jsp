@@ -90,8 +90,7 @@
                     	<line x1="15" y1="-10" x2="15" y2="10" stroke="#333" stroke-width="1" opacity="0.4"/>
                   	</g>
                 	</svg>
-            	</div>
-            
+            	</div>       
             	<h2>ログイン</h2>
             	<c:if test="${not empty error}">
         			<div class="error">${error}</div>
@@ -110,8 +109,7 @@
                 	</form>
              	</div>
              	<p style="margin-top: 20px;"><a href="register">新規登録はこちら</a></p>
-        	</div>
-        
+        	</div>       
  		</div>
 	</body>
 </html>

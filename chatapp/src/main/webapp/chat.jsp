@@ -9,14 +9,74 @@
         return;
     }
 %>
-
 <!DOCTYPE html>
 <html>
 	<head>
     	<meta charset="UTF-8">
     	<title>チャットルーム - ${room.name}</title>
     	<link rel="stylesheet" href="<%=request.getContextPath()%>/css/style.css">
-	</head>
+    	<style>
+    		.message {
+    			position: relative;
+    		}
+    		.delete-btn {
+    			background: #ff4444;
+    			color: white;
+    			border: none;
+    			padding: 4px 8px;
+    			border-radius: 3px;
+    			font-size: 12px;
+    			cursor: pointer;
+    			margin-left: 10px;
+    			opacity: 0.7;
+    			transition: opacity 0.2s;
+    		}
+    		.delete-btn:hover {
+    			opacity: 1;
+    			background: #cc0000;
+    		}
+    		.message-header {
+    			display: flex;
+    			align-items: center;
+    			justify-content: space-between;
+    		}
+    		.message-info {
+    			display: flex;
+    			align-items: center;
+    		}
+    	</style>
+    	<script>
+    		function confirmDelete(messageId, roomId) {
+    			if (confirm('このメッセージを削除しますか？')) {
+    				// 削除リクエストを送信
+    				var form = document.createElement('form');
+    				form.method = 'POST';
+    				form.action = 'chat';
+    				
+    				var actionInput = document.createElement('input');
+    				actionInput.type = 'hidden';
+    				actionInput.name = 'action';
+    				actionInput.value = 'delete';
+    				form.appendChild(actionInput);
+    				
+    				var messageIdInput = document.createElement('input');
+    				messageIdInput.type = 'hidden';
+    				messageIdInput.name = 'messageId';
+    				messageIdInput.value = messageId;
+    				form.appendChild(messageIdInput);
+    				
+    				var roomIdInput = document.createElement('input');
+    				roomIdInput.type = 'hidden';
+    				roomIdInput.name = 'roomId';
+    				roomIdInput.value = roomId;
+    				form.appendChild(roomIdInput);
+    				
+    				document.body.appendChild(form);
+    				form.submit();
+    			}
+    		}
+    	</script>
+    </head>
 	<body>
 		<div class="content-wrapper">
         	<div class="chat-header">
@@ -34,25 +94,57 @@
                     </div>
                 </div>
             </div>
-
     		<h2>チャットルーム: ${room.name}</h2>
-
     		<div class="info">
     			<div style="font-size: 14px; opacity: 0.9;">
         		ようこそ、<strong><%= user.getDisplayName() %></strong> さん！
 				</div>
     		</div>
-    		<div id="chat-messages" class="message">
+    		
+    		<!-- エラーメッセージ表示 -->
+    		<c:if test="${not empty error}">
+    		    <div style="color: red; margin: 10px 0; padding: 10px; background: #ffeeee; border: 1px solid #ffcccc; border-radius: 5px;">
+    		        ${error}
+    		    </div>
+    		</c:if>
+    		
+    		<!-- 成功メッセージ表示 -->
+    		<c:if test="${not empty success}">
+    		    <div style="color: green; margin: 10px 0; padding: 10px; background: #eeffee; border: 1px solid #ccffcc; border-radius: 5px;">
+    		        ${success}
+    		    </div>
+    		</c:if>
+    		
+    		<div id="chat-messages">
 				<c:forEach var="message" items="${messages}">
-    			<div class="message">
-        			<div class="message-header">
-            			<span class="username">${message.displayName}</span>
-            			<span class="timestamp">${message.formattedDateString}</span>
-        			</div>
-        			<div class="message-content">
-            			<c:out value="${message.content}" />
-        			</div>
-    			</div>
+    				<!-- 自分の投稿かどうかを判定して異なるCSSクラスを適用 -->
+    				<div class="message ${message.displayName == sessionScope.user.displayName ? 'my-message' : 'other-message'}">
+        				<div class="message-header">
+        					<div class="message-info">
+            					<span class="username">
+            						<!-- 自分の投稿の場合は「あなた」と表示 -->
+            						<c:choose>
+            							<c:when test="${message.displayName == sessionScope.user.displayName}">
+            								あなた
+            							</c:when>
+            							<c:otherwise>
+            								${message.displayName}
+            							</c:otherwise>
+            						</c:choose>
+            					</span>
+            					<span class="timestamp">${message.formattedDateString}</span>
+            				</div>
+            				<!-- 自分のメッセージの場合のみ削除ボタンを表示 -->
+            				<c:if test="${message.userId == sessionScope.user.id}">
+            					<button class="delete-btn" onclick="confirmDelete(${message.id}, ${roomId})">
+            						削除
+            					</button>
+            				</c:if>
+        				</div>
+        				<div class="message-content">
+            				<c:out value="${message.content}" />
+        				</div>
+    				</div>
 				</c:forEach>
     		</div>
 			<div style="text-align: right; font-size: 14px;">

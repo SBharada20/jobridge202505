@@ -1,7 +1,6 @@
-# Name
-jobridge chat アプリ
+# jobridge chat アプリ
 
-# DEMO
+# 目的
 ジョブリッジの利用者間または、利用者と支援者とのコミュニケーションツール
 日々の状況、問題点、悩み事などを気軽に投稿できるツール
 
@@ -11,7 +10,18 @@ jobridge chat アプリ
 # Requirement
 
 Eclipse Version: 2025-03 (4.35.0)
+H2 Database
+
 
 # Installation
 Eclipseのインストール方法は下記URLよりダウンロード
 https://willbrains.jp/
+
+H2 Databaseのインストール方法は下記URLよりダウンロード
+https://www.h2database.com/html/main.html
+
+
+
+# Author
+* 作成者：原田知明
+* E-mail：harada.sb20@gmail.com
