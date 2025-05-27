@@ -26,7 +26,7 @@ public class RegisterServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/register.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(req, resp);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class RegisterServlet extends HttpServlet {
         if (username == null || password == null || displayName == null ||
                 username.isEmpty() || password.isEmpty() || displayName.isEmpty()) {
             req.setAttribute("error", "全ての項目を入力してください。");
-            req.getRequestDispatcher("register.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(req, resp);
             return;
         }
 
@@ -48,7 +48,7 @@ public class RegisterServlet extends HttpServlet {
         try {
 			if (userDao.findByUsername(username) != null) {
 			    req.setAttribute("error", "そのユーザー名は既に使用されています。");
-			    req.getRequestDispatcher("register.jsp").forward(req, resp);
+			    req.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(req, resp);
 			    return;
 			}
 		} catch (SQLException | ServletException | IOException e) {
@@ -69,7 +69,7 @@ public class RegisterServlet extends HttpServlet {
             resp.sendRedirect("login.jsp");
         } else {
             req.setAttribute("error", "ユーザー登録に失敗しました。");
-            req.getRequestDispatcher("register.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(req, resp);
         }
     }
 }

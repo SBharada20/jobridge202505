@@ -38,10 +38,10 @@ body {
 /* Header Logo Styles */
 .header-logo {
     text-align: center;
-    padding: 30px 0;
+    padding: 10px 0;
     background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
     border-bottom: 3px solid #f0f0f0;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     border-radius: 12px 12px 0 0;
 }
 
@@ -81,6 +81,10 @@ body {
     color: #2c3e50;
     font-size: 1.8em;
     font-weight: 600;
+	background: linear-gradient(135deg, #2c3e50, #34495e);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
 }
 
 .user-info {
@@ -258,6 +262,17 @@ textarea:focus {
     box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
 }
 
+.delete-btn:hover {
+    opacity: 1;
+    background: #cc0000;
+}
+
+.message-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 /* Chat Specific Styles */
 .chat-header {
     background: linear-gradient(135deg, #FF8B20, #FF6B20);
@@ -430,7 +445,23 @@ textarea:focus {
     box-shadow: 0 6px 20px rgba(255, 139, 32, 0.3);
 }
 
-/* Room List Styles */
+.message-info {
+    display: flex;
+    align-items: center;
+}
+
+/* Room List Styles - Updated to integrate from JSP */
+.room-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
 .room-list {
     list-style: none;
     padding: 0;
@@ -443,15 +474,16 @@ textarea:focus {
 }
 
 .room-link {
+    flex-grow: 1;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    padding: 10px;
     display: block;
-    padding: 20px 25px;
     background: linear-gradient(135deg, #ffffff, #fefefe);
     border: 2px solid #f0f0f0;
     border-radius: 16px;
-    text-decoration: none;
-    color: #333;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-weight: 600;
     position: relative;
     overflow: hidden;
 }
@@ -472,6 +504,7 @@ textarea:focus {
 }
 
 .room-link:hover {
+    color: #FF8B20;
     border-color: #FF8B20;
     background: linear-gradient(135deg, #fffaf7, #fff5f0);
     transform: translateY(-4px);
@@ -486,6 +519,40 @@ textarea:focus {
     transform: translateY(-50%);
     font-size: 1.5em;
     opacity: 0.7;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 10px;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+/* Success and Error Messages - Updated from JSP */
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
 }
 
 /* Actions Bar */

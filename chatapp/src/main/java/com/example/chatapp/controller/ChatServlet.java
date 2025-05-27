@@ -26,8 +26,8 @@ import com.example.chatapp.model.User;
 public class ChatServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(ChatServlet.class.getName());
-    private static final String ROOMS_JSP = "rooms.jsp";
-    private static final String CHAT_JSP = "chat.jsp";
+    private static final String ROOMS_JSP = "/WEB-INF/views/rooms.jsp";
+    private static final String CHAT_JSP = "/WEB-INF/views/chat.jsp";
     private static final String UTF_8 = "UTF-8";
 
     private ChatMessageDao messageDao;

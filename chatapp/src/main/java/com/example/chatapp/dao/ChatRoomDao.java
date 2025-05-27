@@ -23,6 +23,7 @@ public class ChatRoomDao {
     private static final String SQL_FIND_ALL = "SELECT * FROM CHAT_ROOMS";
     private static final String SQL_INSERT = "INSERT INTO CHAT_ROOMS (NAME) VALUES (?)";
     private static final String SQL_FIND_BY_ID = "SELECT * FROM CHAT_ROOMS WHERE ID = ?";
+    private static final String SQL_FIND_BY_NAME = "SELECT * FROM CHAT_ROOMS WHERE NAME = ?";
     private static final String SQL_DELETE_BY_ID = "DELETE FROM CHAT_ROOMS WHERE ID = ?";
 
     static {
@@ -95,6 +96,35 @@ public class ChatRoomDao {
 
         return null;
     }
+
+    /** 名前指定でチャットルームを検索 */
+    public ChatRoom findByName(String name) {
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SQL_FIND_BY_NAME)) {
+
+            stmt.setString(1, name);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    ChatRoom room = new ChatRoom();
+                    room.setId(rs.getLong("ID"));
+                    room.setName(rs.getString("NAME"));
+                    return room;
+                }
+            }
+
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "チャットルーム名前検索中にSQLエラーが発生しました", e);
+        }
+
+        return null;
+    }
+
+    /** 名前の重複チェック */
+    public boolean existsByName(String name) {
+        return findByName(name) != null;
+    }
+
     // IDによるチャットルーム削除
     public boolean deleteById(long id) {
         try (Connection conn = getConnection();
