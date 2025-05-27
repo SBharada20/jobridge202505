@@ -13,15 +13,15 @@ Eclipse Version: 2025-03 (4.35.0)
 H2 Database
 
 
-# Installation
-Eclipseのインストール方法は下記URLよりダウンロード
+# インストール方法
+Eclipseは下記URLよりダウンロード
 https://willbrains.jp/
 
-H2 Databaseのインストール方法は下記URLよりダウンロード
+H2 Databaseは下記URLよりダウンロード
 https://www.h2database.com/html/main.html
 
 
 
-# Author
-* 作成者：原田知明
+# 作成者
+* 原田知明
 * E-mail：harada.sb20@gmail.com
