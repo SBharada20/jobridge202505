@@ -2,7 +2,7 @@
 
 # プロジェクトの概要説明
 ジョブリッジの利用者間または、利用者と支援者とのコミュニケーションツール
-日々の状況、問題点、悩み事などを気軽に投稿できるツール
+日々の状況、問題点、悩み事などを気軽に投稿できるアプリ
 
 # Features
 
@@ -22,4 +22,4 @@ H2 Database
 
 # Author
 * 原田知明
-* E-mail：harada.sb20@gmail.com
+* [E-mail：harada.sb20@gmail.com](harada.sb20@gmail.com)

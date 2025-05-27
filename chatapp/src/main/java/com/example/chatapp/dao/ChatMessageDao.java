@@ -23,9 +23,9 @@ public class ChatMessageDao {
     private static final String DB_PASS  = "";
     
     private static final String SQL_INSERT =
-        "INSERT INTO MESSAGES (ROOM_ID, USER_ID, CONTENT, CREATED_AT) VALUES (?, ?, ?, ?)";
+        "INSERT INTO MESSAGES (ROOM_ID, USER_ID, CONTENT, TIMESTAMP) VALUES (?, ?, ?, ?)";
     private static final String SQL_SELECT_BY_ROOM =
-        "SELECT ID, ROOM_ID, USER_ID, CONTENT, CREATED_AT FROM MESSAGES WHERE ROOM_ID = ? ORDER BY CREATED_AT ASC";
+        "SELECT ID, ROOM_ID, USER_ID, CONTENT, TIMESTAMP FROM MESSAGES WHERE ROOM_ID = ? ORDER BY TIMESTAMP ASC";
     private static final String SQL_DELETE_BY_ID = 
     	    "DELETE FROM MESSAGES WHERE ID = ? AND USER_ID = ?";
     
@@ -85,7 +85,7 @@ public class ChatMessageDao {
                     msg.setRoomId(rs.getLong("ROOM_ID"));
                     msg.setUserId(rs.getLong("USER_ID"));
                     msg.setContent(rs.getString("CONTENT"));
-                    Timestamp ts = rs.getTimestamp("CREATED_AT");
+                    Timestamp ts = rs.getTimestamp("TIMESTAMP");
                     if (ts != null) {
                         msg.setTimestamp(ts.toLocalDateTime());
                     }
