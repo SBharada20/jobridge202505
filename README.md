@@ -52,4 +52,4 @@ Pythonに関してはもっと深く勉強したかったです。\
 
 # Author
 * 原田知明
- [E-mail：harada.sb20@gmail.com](harada.sb20@gmail.com)
+* [E-mail：harada.sb20@gmail.com](harada.sb20@gmail.com)
