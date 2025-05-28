@@ -23,6 +23,9 @@
 
 
 # Features
+![画面遷移図](https://github.com/SBharada20/jobridge202505/blob/80a4928dca0270a3570529f13091d058f29cb494/%E7%94%BB%E9%9D%A2%E3%83%81%E3%83%A3%E3%83%97%E3%82%BF%E3%83%BC/Screen%20transition%20diagram.png)
+
+
 ![UML](https://github.com/user-attachments/assets/adb2e982-6ccf-4315-8ec7-57f0088476b9)
 
 # Requirement
