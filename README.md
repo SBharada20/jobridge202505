@@ -38,15 +38,18 @@ H2 Database
 
 [H2 Database](https://www.h2database.com/html/main.html)
 
+# Usage
+* H２データベースで「CREATE_TABLE.sql」を実行
+* 「login.jsp」から実行してください。
 
 # 訓練を振り返って
-５ヵ月の訓練で最初は長い気がしていたが、振り返ってみるとあっという間に
-５ヵ月月過ぎたました。
-途中躓く箇所もありましたが楽しかったです。
-Pythonに関してはもっと深く勉強したかったです。
+５ヵ月の訓練で最初は長い気がしていたが、\
+振り返ってみるとあっという間に５ヵ月月過ぎたました。\
+途中躓く箇所もありましたが楽しかったです。\
+Pythonに関してはもっと深く勉強したかったです。\
 訓練終了後もスキルアップしていきたいと思います。
 
 
 # Author
 * 原田知明
- [E-mail：harada.sb20@gmail.com](harada.sb20@gmail.com)
+* E-mail：harada.sb20@gmail.com
