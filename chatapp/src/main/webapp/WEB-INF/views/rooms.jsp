@@ -12,7 +12,6 @@
         return;
     }
 %>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,11 +25,9 @@
     </script>
 </head>
 <body>
-
     <div class="content-wrapper">
             <!-- 共通ヘッダーロゴをinclude -->
             <jsp:include page="/WEB-INF/views/header-logo.jsp" />
-       
         <div class="container">
             <!-- メッセージ表示 -->
             <%
@@ -53,7 +50,6 @@
             <%
                 }
             %>
-
             <h3>チャットルーム一覧</h3>
               <div class="info">
             <div style="font-size: 14px; opacity: 0.9;">
@@ -78,7 +74,6 @@
             <c:if test="${empty rooms}">
                 <p>現在、参加可能なルームはありません。</p>
             </c:if>
-     
             <div class="actions">
                 <div class="form-group">
                     <a class="btn btn-primary" href="createRoom">新しいルームを作成</a>

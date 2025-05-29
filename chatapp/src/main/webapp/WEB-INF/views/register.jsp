@@ -11,10 +11,8 @@
     <div class="content-wrapper">
         <!-- 共通ヘッダーロゴをinclude -->
         <jsp:include page="/WEB-INF/views/header-logo.jsp" />
-        
-        <div class="form-container">
-            <h3>ユーザー登録</h3>
-            
+        <h3>ユーザー登録</h3>
+        <div class="form-container">           
             <!-- 成功メッセージ -->
             <c:if test="${not empty message}">
                 <div style="color: green; margin-bottom:1em;">

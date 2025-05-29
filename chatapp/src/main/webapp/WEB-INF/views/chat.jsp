@@ -57,7 +57,6 @@
                 ようこそ、<strong><%= user.getDisplayName() %></strong> さん！
             </div>
         </div>
-        
         <!-- エラーメッセージ表示 -->
         <c:if test="${not empty error}">
             <div class="alert-error">
@@ -71,7 +70,6 @@
                 ${success}
             </div>
         </c:if>
-        
         <div id="chat-messages">
             <c:forEach var="message" items="${messages}">
                 <div class="message ${message.displayName == sessionScope.user.displayName ? 'my-message' : 'other-message'}">
